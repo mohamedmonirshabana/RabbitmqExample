@@ -37,30 +37,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var amqp_connection_manager_1 = require("amqp-connection-manager");
-function checkQueue(channel) {
-    return channel.assertQueue('Ledo');
+var host = 'amqp://localhost';
+var Exchange = "HuFanout";
+var queueName = "queueMessage_2";
+var typeofExchange = "fanout";
+function checkQuee(channel) {
+    return channel.assertQueue(queueName);
 }
-function consume() {
+function consumer() {
     return __awaiter(this, void 0, void 0, function () {
-        var connection, quequeName_1, err_1;
+        var connection;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    connection = amqp_connection_manager_1["default"].connect(['amqp://localhost']);
-                    quequeName_1 = "Ledo";
+                    connection = amqp_connection_manager_1["default"].connect([host]);
                     return [4 /*yield*/, connection.createChannel({
+                            json: true,
                             setup: function (channel) { return __awaiter(_this, void 0, void 0, function () {
                                 return __generator(this, function (_a) {
                                     switch (_a.label) {
-                                        case 0:
-                                            console.log("Start Consum");
-                                            return [4 /*yield*/, checkQueue(channel)];
+                                        case 0: return [4 /*yield*/, checkQuee(channel)];
                                         case 1:
                                             _a.sent();
-                                            channel.consume(quequeName_1, function (msg) {
-                                                console.log("New message received", Buffer.from(msg.content).toString());
+                                            channel.consume(queueName, function (msg) {
+                                                console.log(msg.content.toString());
                                                 channel.ack(msg);
                                             });
                                             return [2 /*return*/];
@@ -70,17 +71,11 @@ function consume() {
                         })];
                 case 1:
                     _a.sent();
-                    return [3 /*break*/, 3];
-                case 2:
-                    err_1 = _a.sent();
-                    console.error(err_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });
 }
-console.log("Start");
-consume();
+consumer();
 
-//# sourceMappingURL=consume.js.map
+//# sourceMappingURL=consumer.js.map

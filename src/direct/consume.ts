@@ -17,7 +17,8 @@ async function consume(){
             console.log("Start Consum");
               await checkQueue(channel) ;
               channel.consume(quequeName, (msg: ConsumeMessage) => {
-                 console.log("New message received", Buffer.from(msg.content).toString());  
+                 console.log("New message received", Buffer.from(msg.content).toString());
+                 channel.ack(msg);
               });
         }
     });

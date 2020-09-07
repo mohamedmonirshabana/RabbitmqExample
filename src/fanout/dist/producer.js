@@ -37,50 +37,63 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var amqp_connection_manager_1 = require("amqp-connection-manager");
-function checkQueue(channel) {
-    return channel.assertQueue('Ledo');
+var host = 'amqp://localhost';
+var Exchange = "HuFanout";
+var queueName_1 = "queueMessage_1";
+var queueName_2 = "queueMessage_2";
+var queueName_3 = "queueMessage_3";
+var typeofExchange = "fanout";
+function checkExchange(channel) {
+    return channel.assertExchange(Exchange, typeofExchange);
 }
-function consume() {
+// function checkQueue(channel : ConfirmChannel){
+//     return channel.assertQueue(queueName);
+// }
+// function bind(channel: ConfirmChannel){
+//     //return channel.bindQueue(queueName,Exchange,'');
+// }
+function producer() {
     return __awaiter(this, void 0, void 0, function () {
-        var connection, quequeName_1, err_1;
+        var connection, msg_1, msg_2, msg_3, connectqueue;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    connection = amqp_connection_manager_1["default"].connect(['amqp://localhost']);
-                    quequeName_1 = "Ledo";
-                    return [4 /*yield*/, connection.createChannel({
-                            setup: function (channel) { return __awaiter(_this, void 0, void 0, function () {
-                                return __generator(this, function (_a) {
-                                    switch (_a.label) {
-                                        case 0:
-                                            console.log("Start Consum");
-                                            return [4 /*yield*/, checkQueue(channel)];
-                                        case 1:
-                                            _a.sent();
-                                            channel.consume(quequeName_1, function (msg) {
-                                                console.log("New message received", Buffer.from(msg.content).toString());
-                                                channel.ack(msg);
-                                            });
-                                            return [2 /*return*/];
-                                    }
-                                });
-                            }); }
-                        })];
+                    connection = amqp_connection_manager_1["default"].connect([host]);
+                    msg_1 = { username: "Medo Ali" };
+                    msg_2 = { username: "Saber Engle" };
+                    msg_3 = { username: "Keto kareem" };
+                    connectqueue = connection.createChannel({
+                        json: true,
+                        setup: function (channel) { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                channel.assertQueue(queueName_1);
+                                channel.assertQueue(queueName_2);
+                                channel.assertQueue(queueName_3);
+                                checkExchange(channel);
+                                //checkQueue(channel);
+                                //bind(channel);
+                                channel.bindQueue(queueName_1, Exchange, '');
+                                channel.bindQueue(queueName_2, Exchange, '');
+                                channel.bindQueue(queueName_3, Exchange, '');
+                                return [2 /*return*/];
+                            });
+                        }); }
+                    });
+                    return [4 /*yield*/, connectqueue.sendToQueue(queueName_1, msg_1)];
                 case 1:
                     _a.sent();
-                    return [3 /*break*/, 3];
+                    return [4 /*yield*/, connectqueue.sendToQueue(queueName_2, msg_2)];
                 case 2:
-                    err_1 = _a.sent();
-                    console.error(err_1);
-                    return [3 /*break*/, 3];
-                case 3: return [2 /*return*/];
+                    _a.sent();
+                    return [4 /*yield*/, connectqueue.sendToQueue(queueName_3, msg_3)];
+                case 3:
+                    _a.sent();
+                    return [2 /*return*/];
             }
         });
     });
 }
-console.log("Start");
-consume();
+producer();
 
-//# sourceMappingURL=consume.js.map
+//# sourceMappingURL=producer.js.map
